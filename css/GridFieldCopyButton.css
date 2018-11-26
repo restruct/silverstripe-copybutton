@@ -1,6 +1,35 @@
-.gridfield-button-copy{
-	background: url(../images/document--copy.png) no-repeat 2px 0px !important;
-	display: inline-block; width: 20px; height: 20px; 
-	position: relative;
-	top: 6px;
+.gridfield-button-copy {
+	color: #43536d;
+	background-color: transparent;
+	border: 0;
+	display: inline-block;
+	border-radius: .23rem;
+	min-height: 32px;
+	min-width: 44px;
+	margin-top: -11px;
+	margin-bottom: -11px;
+	text-align: center;
+}
+.gridfield-button-copy:hover {
+	background-color: #e3eaf0;
+}
+.gridfield-button-copy:before {
+	content: "j"; /* f=solid / j=outline */
+	font-size: 1.231rem;
+	vertical-align: top;
+
+	font-family: silverstripe!important;
+	font-weight: 400!important;
+	font-variant: normal!important;
+	text-transform: none!important;
+	speak: none;
+	-webkit-font-smoothing: antialiased;
+	-moz-osx-font-smoothing: grayscale;
+}
+.dropdown-menu .gridfield-button-copy:before {
+	content: "f";
+	margin-right: 2px;
+}
+.dropdown-menu .gridfield-button-copy:after {
+	content: attr(title);
 }

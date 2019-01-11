@@ -1,0 +1,7 @@
+de:
+  GridAction:
+    COPY_DESCRIPTION: 'Kopieren'
+    Copy: 'Kopieren'
+
+  GridFieldAction_Copy:
+    CreatePermissionsFailure: 'Keine Schreibrechte'

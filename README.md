@@ -11,7 +11,7 @@ Elvinas Liutkevičius
 
 ## Requirements
 
-SilverStripe 3
+SilverStripe 4
 
 ## Documentation
 
@@ -35,6 +35,9 @@ override getEditForm() method like this:
 
 
 This action will make exact copy of the record (with all relations and etc.).
+Note: you have to set configs for cascading duplications in your DataObjects to duplicate relations
+See: https://docs.silverstripe.org/en/4/developer_guides/model/relations/#cascading-duplications
+
 Sometimes you will need to do some actions just after copy operation (i.e.
 you'll need to remove some relations). It is easily achieved by extending
 DataObject and writing all the actions in the onAfterDuplicate() method.

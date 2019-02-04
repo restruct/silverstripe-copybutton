@@ -44,18 +44,18 @@ class CopyButton implements GridField_ColumnProvider, GridField_ActionProvider, 
     public function getColumnMetadata($gridField, $columnName)
     {
         if ($columnName == 'Actions') {
-            return array('title' => '');
+            return ['title' => ''];
         }
     }
 
     public function getColumnsHandled($gridField)
     {
-        return array('Actions');
+        return ['Actions'];
     }
 
     public function getActions($gridField)
     {
-        return array('copyrecord');
+        return ['copyrecord'];
     }
 
     public function getColumnContent($gridField, $record, $columnName)
@@ -81,7 +81,7 @@ class CopyButton implements GridField_ColumnProvider, GridField_ActionProvider, 
             'CopyRecord'.$record->ID,
             false,
             "copyrecord",
-            array('RecordID' => $record->ID)
+            ['RecordID' => $record->ID]
         )
             ->addExtraClass('gridfield-button-copy')
             ->setAttribute('classNames', 'font-icon-plus')

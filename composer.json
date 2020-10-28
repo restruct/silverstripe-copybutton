@@ -1,8 +1,8 @@
 {
-    "name": "dhensby/silverstripe-copybutton",
+    "name": "restruct/silverstripe-copybutton",
     "type": "silverstripe-vendormodule",
     "license": "BSD-3-Clause",
-    "description": "Adds copy button to the GridField.",
+    "description": "Adds copy/duplicate button to the GridField.",
     "keywords": [
         "silverstripe",
         "copy",
@@ -23,7 +23,8 @@
         }
     },
     "replace": {
-        "unisolutions/silverstripe-copybutton": "self.version"
+        "unisolutions/silverstripe-copybutton": "self.version",
+        "dhensby/silverstripe-copybutton": "self.version",
     },
     "extra": {
         "branch-alias": {

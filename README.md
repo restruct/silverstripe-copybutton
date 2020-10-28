@@ -1,17 +1,11 @@
 silverstripe-copybutton
 =======================
 
-Adds copy button to the GridField
+Adds a copy/duplicate button to GridFields
 
-## Maintainer Contact
+## Original author
 
-Elvinas Liutkevičius
-
-<elvinas (at) unisolutions (dot) eu>
-
-## Requirements
-
-SilverStripe 4
+Elvinas Liutkevičius <elvinas (at) unisolutions (dot) eu>
 
 ## Documentation
 

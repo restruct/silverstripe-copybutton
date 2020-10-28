@@ -5,7 +5,7 @@ Adds a copy/duplicate button to GridFields
 
 ## Original author
 
-Elvinas Liutkevičius <elvinas (at) unisolutions (dot) eu> 
+Elvinas Liutkevičius <elvinas (at) unisolutions (dot) eu>  
 (Forked from dhensby's SS4-updated fork for quick maintenance & updates/tags)
 
 ## Documentation

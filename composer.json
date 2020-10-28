@@ -24,7 +24,7 @@
     },
     "replace": {
         "unisolutions/silverstripe-copybutton": "self.version",
-        "dhensby/silverstripe-copybutton": "self.version",
+        "dhensby/silverstripe-copybutton": "self.version"
     },
     "extra": {
         "branch-alias": {

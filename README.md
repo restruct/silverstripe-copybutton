@@ -5,7 +5,7 @@ Adds a copy/duplicate button to GridFields
 
 ## Original author
 
-Elvinas Liutkevičius <elvinas (at) unisolutions (dot) eu>  
+Elvinas Liutkevičius <elvinas (at) unisolutions (dot) eu>
 (Forked from dhensby's SS4-updated fork for quick maintenance & updates/tags)
 
 ## Documentation
@@ -22,7 +22,7 @@ override getEditForm() method like this:
 			->Fields()
 			->fieldByName($this->sanitiseClassName($this->modelClass))
 			->getConfig()
-			->addComponent(new GridFieldCopyButton(), 'GridFieldEditButton') // or just ->addComponent(new GridFieldCopyButton())
+			->addComponent(new CopyButton(), 'GridFieldEditButton') // or just ->addComponent(new CopyButton())
 		;
 
 		return $form;

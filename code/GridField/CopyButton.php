@@ -2,13 +2,13 @@
 
 namespace Unisolutions\GridField;
 
+use SilverStripe\Core\Validation\ValidationException;
 use SilverStripe\Forms\GridField\GridField_ActionMenuItem;
 use SilverStripe\Forms\GridField\GridField_ColumnProvider;
 use SilverStripe\Forms\GridField\GridField_ActionProvider;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\ORM\DataObject;
-use SilverStripe\ORM\ValidationException;
 
 /**
  * This component provides a button for copying record.
@@ -95,7 +95,7 @@ class CopyButton implements GridField_ColumnProvider, GridField_ActionProvider, 
     public function handleAction(GridField $gridField, $actionName, $arguments, $data)
     {
         if ($actionName == 'copyrecord') {
-            /** @var \SilverStripe\ORM\DataObject $item */
+            /** @var DataObject $item */
             $item = $gridField->getList()->byID($arguments['RecordID']);
             if (!$item) {
                 return;

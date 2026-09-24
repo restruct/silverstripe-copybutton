@@ -20,9 +20,10 @@ Hotfix for projects that stay on `^2.0`. The maintained line is 3.x on `main` (S
 
 ## 2.0.1
 
-Declared Silverstripe 6 support (`^4 || ^5 || ^6`). The permission-denied path fatals on 4 and 5,
-see 2.0.2.
+Declared Silverstripe 5 and 6 support (`^4 || ^5 || ^6`). The permission-denied path fatals on 4
+and 5, see 2.0.2.
 
 ## 2.0.0
 
-Silverstripe 4 (later also 5) line, forked from `dhensby/silverstripe-copybutton`.
+Silverstripe 4 line (`^4`; Silverstripe 5 and 6 were added in 2.0.1), forked from
+`dhensby/silverstripe-copybutton`.

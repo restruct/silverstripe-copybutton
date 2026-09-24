@@ -6,7 +6,9 @@
     "keywords": [
         "silverstripe",
         "copy",
-        "button"
+        "button",
+        "gridfield",
+        "duplicate"
     ],
     "authors": [
         {
@@ -15,25 +17,48 @@
         }
     ],
     "require": {
-        "silverstripe/framework": "^4 || ^5 || ^6"
+        "php": "^8.1",
+        "silverstripe/framework": "^5 || ^6",
+        "silverstripe/vendor-plugin": "^2 || ^3"
+    },
+    "require-dev": {
+        "silverstripe/recipe-testing": "^3 || ^4"
     },
     "autoload": {
         "psr-4": {
             "Unisolutions\\": "code/"
         }
     },
+    "autoload-dev": {
+        "psr-4": {
+            "Unisolutions\\Tests\\": "tests/"
+        }
+    },
     "replace": {
         "unisolutions/silverstripe-copybutton": "self.version",
         "dhensby/silverstripe-copybutton": "self.version"
     },
+    "config": {
+        "allow-plugins": {
+            "composer/installers": true,
+            "silverstripe/vendor-plugin": true
+        }
+    },
     "extra": {
         "branch-alias": {
-            "dev-master": "2.x-dev"
+            "dev-master": "3.x-dev",
+            "dev-main": "3.x-dev"
         },
         "expose": [
             "css"
         ]
     },
     "minimum-stability": "dev",
-    "prefer-stable": true
+    "prefer-stable": true,
+    "funding": [
+        {
+            "type": "github",
+            "url": "https://github.com/sponsors/restruct"
+        }
+    ]
 }

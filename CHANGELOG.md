@@ -1,6 +1,6 @@
 # Changelog
 
-## 3.0.0 (unreleased)
+## 3.0.0 (2026-09-25)
 
 Silverstripe 5 and 6 on one line. See [UPGRADING.md](UPGRADING.md).
 
@@ -11,6 +11,13 @@ Silverstripe 5 and 6 on one line. See [UPGRADING.md](UPGRADING.md).
   stay on `2.0.x`.
 - In menu mode the "Copy" item is no longer offered to users for whom the record's `canCreate()` is
   false (see Changed). Anything that relied on seeing it there, such as a UI test, will not find it.
+- `silverstripe/vendor-plugin` `^2 || ^3` is now a direct requirement (the module exposes `css/`
+  through it). Recipe-core 5 and 6 already bring it in; a project that pinned vendor-plugin 1.x cannot
+  install 3.0.
+- `composer.json` still `replace`s `dhensby/silverstripe-copybutton` (both packages ship the same
+  class, `Unisolutions\GridField\CopyButton`, so they can never be installed side by side). Since
+  upstream now publishes its own 3.0.0, a project that asks for `dhensby/silverstripe-copybutton:^3`
+  and gets this package instead gets this package's behaviour (see Changed), not upstream's.
 
 ### Fixed
 
@@ -22,6 +29,8 @@ Silverstripe 5 and 6 on one line. See [UPGRADING.md](UPGRADING.md).
   on 6).
 - A copy that comes back unwritten now throws a `RuntimeException` instead of calling
   `user_error(..., E_USER_ERROR)`, which is deprecated as of PHP 8.4.
+- A copy action whose request carries no `RecordID` is ignored. Before, it raised an
+  "Undefined array key" warning.
 
 ### Changed
 
@@ -31,16 +40,25 @@ Silverstripe 5 and 6 on one line. See [UPGRADING.md](UPGRADING.md).
 - Menu mode hides the "Copy" item from users who cannot create the record, the way the core
   `GridFieldDeleteAction` hides itself; column mode already hid its button. Before, the item was
   shown to everyone and refused only once clicked.
+- The default branch is `main` (was `master`), and `dev-main` is the `3.x-dev` alias. The 2.0.x line
+  lives on branch `v2`.
 
 ### Added
 
 - A behavioural test suite (`tests/`) and CI across Silverstripe 5 and 6
   (`.github/workflows/ci.yml`).
 - `funding` in `composer.json`.
+- A `LICENSE` file. The licence is unchanged (BSD-3-Clause, as `composer.json` always declared); the
+  file names the original author and the contributors.
 - README: requirements, compatibility table, ModelAdmin usage via `getGridFieldConfig()`, what a
   copy does and does not do, configuration, and how to run the tests. The old example that passed
   `'GridFieldEditButton'` as a short string to `addComponent()` is corrected: that string never
   matched the namespaced class, so the button was appended at the end instead.
+
+## 2.0.2 (2026-09-25)
+
+Hotfix on the `v2` branch for projects that stay on `^2.0`: the fix for #3 (the permission-denied
+path fatalled on Silverstripe 4 and 5), and the `LICENSE` file. Nothing else changes.
 
 ## 2.0.1
 

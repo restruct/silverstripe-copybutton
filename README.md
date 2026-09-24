@@ -26,17 +26,17 @@ composer require restruct/silverstripe-copybutton
 
 | Branch | Module version | Silverstripe | PHP |
 |--------|----------------|--------------|-----|
-| `master` | `3.x` | `^5 \|\| ^6` | `^8.1` |
-| (tags only) | `2.0.x` | `^4 \|\| ^5 \|\| ^6` (see note) | not declared |
+| `main` | `3.x` | `^5 \|\| ^6` | `^8.1` |
+| `v2` | `2.0.x` | `^4 \|\| ^5 \|\| ^6` (see note) | not declared |
 | `1`, `1.0` | `1.x` | `^3` | not declared |
 
 `2.0.1` declares Silverstripe 4, 5 and 6 but throws a Silverstripe 6-only exception class when a
 user without create permission triggers a copy, so on 4 and 5 that path fatals (issue #3). `3.x`
-fixes it. Silverstripe 4 reached end of life in April 2025 and is no longer supported or tested here;
+and the `2.0.2` hotfix fix it. Silverstripe 4 reached end of life in April 2025 and is no longer supported or tested here;
 projects still on it should stay on `2.0.x`.
 
-`master` is the only maintained line: it supports every Silverstripe version this module still
-targets, so there is no separate maintenance branch.
+`main` is the maintained line: it supports every Silverstripe version this module still targets.
+The `v2` branch exists only for hotfixes to projects that stay on `^2.0` (such as `2.0.2`).
 
 **`composer.json` is the source of truth** for exact constraints; this table is a quick reference.
 
@@ -140,3 +140,14 @@ SS_PHPUNIT_FLUSH=1 vendor/bin/phpunit vendor/restruct/silverstripe-copybutton/te
 ```
 
 CI runs the same suite against Silverstripe 5 and 6 on every push; see `.github/workflows/ci.yml`.
+
+## Relation to dhensby/silverstripe-copybutton
+
+This package `replace`s `dhensby/silverstripe-copybutton` (and `unisolutions/silverstripe-copybutton`):
+all three ship the same class, so only one of them can be installed. Upstream publishes its own
+Silverstripe 6-only 3.0.0; this package's 3.x covers Silverstripe 5 and 6 and differs in behaviour
+(see [CHANGELOG.md](CHANGELOG.md)).
+
+## Licence
+
+BSD-3-Clause, see [LICENSE](LICENSE).

@@ -139,7 +139,7 @@ vendor/bin/phpunit vendor/restruct/silverstripe-copybutton/tests flush=1
 SS_PHPUNIT_FLUSH=1 vendor/bin/phpunit vendor/restruct/silverstripe-copybutton/tests
 ```
 
-CI runs the same suite against Silverstripe 5 and 6 on every push; see `.github/workflows/ci.yml`.
+CI runs the same suite against Silverstripe 5 and 6 on pushes to `main` and on pull requests; see `.github/workflows/ci.yml`.
 
 ## Relation to dhensby/silverstripe-copybutton
 

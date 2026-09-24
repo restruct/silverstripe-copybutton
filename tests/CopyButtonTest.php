@@ -169,9 +169,10 @@ class CopyButtonTest extends SapphireTest
 
     public function testCopyActionWithoutARecordIdDoesNothingAndRaisesNoWarning()
     {
-        # Up to 3.0.0 handleAction() read $arguments['RecordID'] unguarded: a request without it
-        # raised "Undefined array key". The warning is captured here by our own handler rather than
-        # left to the runner, because PHPUnit 9 (SS5) and 11 (SS6) escalate warnings differently.
+        # Before 3.0.0 (including 2.0.2) handleAction() read $arguments['RecordID'] unguarded: a
+        # request without it raised "Undefined array key". The warning is captured here by our own
+        # handler rather than left to the runner, because PHPUnit 9 (SS5) and 11 (SS6) escalate
+        # warnings differently.
         $this->logInWithPermission('ADMIN');
         $button = new CopyButton();
         $count = CopyRecord::get()->count();

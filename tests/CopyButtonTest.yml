@@ -1,0 +1,8 @@
+Unisolutions\Tests\Stub\CopyRecord:
+  first:
+    Title: 'First record'
+  second:
+    Title: 'Second record'
+  broken:
+    Title: 'Copy of this one comes back unwritten'
+    SimulateFailedCopy: true

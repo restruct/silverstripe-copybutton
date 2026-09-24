@@ -106,6 +106,13 @@ class CopyButton extends AbstractGridFieldComponent implements GridField_ColumnP
     public function handleAction(GridField $gridField, $actionName, $arguments, $data)
     {
         if ($actionName == 'copyrecord') {
+            # A request whose action state carries no RecordID (replayed or hand-crafted POST) has
+            # nothing to copy. Up to 3.0.0 the lookup below read the missing key directly and raised
+            # an "Undefined array key" warning, which a consuming project's test suite escalates.
+            if (empty($arguments['RecordID'])) {
+                return;
+            }
+
             /** @var DataObject $item */
             $item = $gridField->getList()->byID($arguments['RecordID']);
             if (!$item) {

@@ -2,9 +2,9 @@ name: CI
 
 on:
   push:
-    # The repository's default branch is still `master`. If it is renamed to `main` (the portfolio
-    # convention), this list must follow, or pushes to the default branch stop running CI.
-    branches: [master]
+    # The default branch is `main` (portfolio convention; renamed from `master` for 3.0). If it is
+    # ever renamed again, this list must follow, or pushes to the default branch stop running CI.
+    branches: [main]
   pull_request:
   workflow_dispatch:
 
@@ -112,8 +112,11 @@ jobs:
           <!-- Warning-to-error escalation is the RUNNER's behaviour and differs by PHPUnit
                major: 9 (SS5) converts warnings by default, 11 (SS6) has no such attribute.
                failOnWarning is pinned so a warning behaves identically on every leg. -->
+          <!-- failOnEmptyTestSuite: a suite that silently collects nothing (wrong path, autoload
+               mapping lost, tests export-ignored by a dist install) must turn the leg red, not
+               pass as "No tests executed". -->
           <phpunit bootstrap="vendor/silverstripe/framework/tests/bootstrap.php" colors="true"
-                   failOnWarning="true">
+                   failOnWarning="true" failOnEmptyTestSuite="true">
               <testsuites>
                   <testsuite name="copybutton">
                       <directory>vendor/restruct/silverstripe-copybutton/tests</directory>
@@ -169,13 +172,16 @@ jobs:
         #   failOnWarning.
         # - SS6 (framework 6, PHPUnit 11): a `flush=1` argument no longer works; framework 6 reads
         #   SS_PHPUNIT_FLUSH instead, which also combines with --testsuite.
+        # --fail-on-empty-test-suite on every call as well as in phpunit.xml: the SS5 legs run by
+        # path, and the flag holds even if phpunit.xml is ever not picked up. PHPUnit 9.6 accepts
+        # the flag although its --help does not list it (checked: exit 1 on an empty directory).
         run: |
           if [ "${{ matrix.silverstripe }}" = "5" ]; then
-            vendor/bin/phpunit vendor/restruct/silverstripe-copybutton/tests flush=1
-            vendor/bin/phpunit app/tests flush=1
+            vendor/bin/phpunit --fail-on-empty-test-suite vendor/restruct/silverstripe-copybutton/tests flush=1
+            vendor/bin/phpunit --fail-on-empty-test-suite app/tests flush=1
           else
-            SS_PHPUNIT_FLUSH=1 vendor/bin/phpunit --testsuite copybutton
-            SS_PHPUNIT_FLUSH=1 vendor/bin/phpunit --testsuite consumer
+            SS_PHPUNIT_FLUSH=1 vendor/bin/phpunit --fail-on-empty-test-suite --testsuite copybutton
+            SS_PHPUNIT_FLUSH=1 vendor/bin/phpunit --fail-on-empty-test-suite --testsuite consumer
           fi
 
       - name: Boot the app and build the database

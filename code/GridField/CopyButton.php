@@ -5,23 +5,32 @@ namespace Unisolutions\GridField;
 # Not imported: framework 6 only (framework 4/5 have SilverStripe\ORM\ValidationException).
 # The class is resolved at runtime instead, see validationExceptionClass().
 //use SilverStripe\Core\Validation\ValidationException;
+use SilverStripe\Forms\GridField\AbstractGridFieldComponent;
 use SilverStripe\Forms\GridField\GridField_ActionMenuItem;
 use SilverStripe\Forms\GridField\GridField_ColumnProvider;
 use SilverStripe\Forms\GridField\GridField_ActionProvider;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 use SilverStripe\Forms\GridField\GridField;
 use SilverStripe\ORM\DataObject;
+use RuntimeException;
 
 /**
  * This component provides a button for copying record.
  * First of all it dublicates record and then opens opens edit form {@link GridFieldDetailForm}.
+ *
+ * NB: the second half of the line above describes the Silverstripe 3 version (1.x). Since 2.x the
+ * copy is written and the GridField re-renders with it in the list; no edit form is opened.
+ * The button/menu item is only offered to users for whom the record's canCreate() is true.
  *
  * @package    framework
  * @subpackage gridfield
  * @author     Elvinas Liutkevičius <elvinas@unisolutions.eu>
  * @license    BSD http://silverstripe.org/BSD-license
  */
-class CopyButton implements GridField_ColumnProvider, GridField_ActionProvider, GridField_ActionMenuItem
+# Extends AbstractGridFieldComponent (framework 5 and 6) for its Injectable trait, like the core row
+# actions: CopyButton::create() now works and the class can be swapped through the Injector. Up to
+# 2.0.1 the component had no Injectable, so ::create() fatalled and only `new` worked.
+class CopyButton extends AbstractGridFieldComponent implements GridField_ColumnProvider, GridField_ActionProvider, GridField_ActionMenuItem
 {
 
     private $useAsColumn;
@@ -114,7 +123,10 @@ class CopyButton implements GridField_ColumnProvider, GridField_ActionProvider, 
 
             $clone = $item->duplicate();
             if (!$clone || $clone->ID < 1) {
-                user_error("Error Duplicating!", E_USER_ERROR);
+                # Passing E_USER_ERROR to trigger_error()/user_error() is deprecated as of PHP 8.4,
+                # which the Silverstripe 6 line runs on. An exception halts the request the same way.
+                //user_error("Error Duplicating!", E_USER_ERROR);
+                throw new RuntimeException('Error duplicating record ' . get_class($item) . '#' . $item->ID);
             }
         }
     }
@@ -147,6 +159,14 @@ class CopyButton implements GridField_ColumnProvider, GridField_ActionProvider, 
     {
         if($this->useAsColumn){
             return;
+        }
+
+        # No group means GridField_ActionMenu leaves the item out, which is how the core row actions
+        # (e.g. GridFieldDeleteAction) hide themselves from users who may not use them. Up to 2.0.1
+        # the menu item was offered to everyone and only refused once clicked; column mode already
+        # hid the button (see getColumnContent()).
+        if (!$record->canCreate()) {
+            return null;
         }
 
         return GridField_ActionMenuItem::DEFAULT_GROUP;

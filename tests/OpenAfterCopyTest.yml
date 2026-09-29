@@ -1,0 +1,12 @@
+Unisolutions\Tests\Stub\CopyRecord:
+  first:
+    Title: 'First record'
+  second:
+    Title: 'Second record'
+Unisolutions\Tests\Stub\CopyParent:
+  parent:
+    Title: 'Parent record'
+Unisolutions\Tests\Stub\CopyChild:
+  child:
+    Title: 'Child record'
+    Parent: =>Unisolutions\Tests\Stub\CopyParent.parent

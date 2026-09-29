@@ -1,0 +1,28 @@
+<?php
+
+namespace Unisolutions\Tests\Stub;
+
+use SilverStripe\Dev\TestOnly;
+use SilverStripe\ORM\DataObject;
+
+/**
+ * Test-only record the CopyButton is exercised against, so the suite does not depend on how a
+ * host project configures its own models.
+ *
+ * Deliberately NOT abstract, and no abstract base class either: TableBuilder instantiates every
+ * DataObject in the manifest before it checks for TestOnly, and in test mode an installed module's
+ * tests/ ARE in the manifest - an abstract fixture here would break every consuming project's
+ * database tests.
+ *
+ * canCreate() is not overridden: DataObject's default (ADMIN only) is what the tests switch with
+ * logInWithPermission('ADMIN').
+ */
+class CopyRecord extends DataObject implements TestOnly
+{
+    # Short table name; the FQCN-derived default would also fit, but is not relied upon.
+    private static $table_name = 'CopyButtonTest_Record';
+
+    private static $db = [
+        'Title' => 'Varchar',
+    ];
+}

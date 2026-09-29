@@ -44,3 +44,48 @@ DataObject and writing all the actions in the onAfterDuplicate() method.
 		}
 
 	}
+
+## Open the copy after copying
+
+From 2.1, the button can open the copy's edit form straight away instead of re-rendering the list.
+It is off by default:
+
+```php
+use SilverStripe\Forms\GridField\GridFieldEditButton;
+use Unisolutions\GridField\CopyButton;
+
+$config->addComponent((new CopyButton())->setOpenAfterCopy(true), GridFieldEditButton::class);
+```
+
+(2.x has no `CopyButton::create()`; 3.x does.)
+
+The copy opens in the GridField's own detail form (`GridFieldDetailForm`), at the same URL the row's
+edit button links to. That works for a GridField in a ModelAdmin and for one nested in a record's
+edit form. In the CMS the redirect is answered with an `X-ControllerURL` header, and the admin loads
+the edit form into the panel; outside the CMS it is a normal 302 redirect.
+
+When the GridField cannot open the copy, the button falls back to re-rendering the list, without an
+error:
+
+* the GridField has no `GridFieldDetailForm` (for example `GridFieldConfig_Base`), or
+* the copy is not in the GridField's list. `duplicate()` does not add the copy to a `many_many`
+  list, or to a list filtered on something the copy does not match; a `has_many` list keeps it,
+  because the copy keeps the parent's ID.
+
+This replaces redirecting from the model's `onAfterDuplicate()`, which fires on every
+`duplicate()` call, not only on a click of this button.
+
+## Running the tests
+
+The module cannot be tested on its own: it needs a host Silverstripe project, with
+silverstripe/admin (recipe-cms) so the ModelAdmin tests run rather than skip. Require the module there through a Composer path repository with
+`symlink: true`, add `"Unisolutions\\Tests\\": "vendor/restruct/silverstripe-copybutton/tests/"` to
+the host's `autoload-dev`, then:
+
+```bash
+# Silverstripe 4 and 5 (PHPUnit 9) - the path must come before flush=1
+vendor/bin/phpunit vendor/restruct/silverstripe-copybutton/tests flush=1
+
+# Silverstripe 6 (PHPUnit 11) - a flush=1 argument is ignored, use the env var
+SS_PHPUNIT_FLUSH=1 vendor/bin/phpunit vendor/restruct/silverstripe-copybutton/tests
+```

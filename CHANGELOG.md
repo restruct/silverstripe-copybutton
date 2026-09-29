@@ -1,5 +1,17 @@
 # Changelog
 
+## 2.1.0 (unreleased)
+
+### Added
+
+- `CopyButton::setOpenAfterCopy(bool $open = true)` / `getOpenAfterCopy()`: opt-in, opens the copy's
+  edit form in the GridField's detail form after a successful copy, instead of re-rendering the list.
+  The edit URL is built like `GridFieldEditButton`'s, so it works in a ModelAdmin and in a GridField
+  nested in a record's edit form. It falls back to the list re-render when the GridField has no
+  `GridFieldDetailForm` or the copy is not in its list (such as a `many_many` list). Off by default,
+  so existing GridFields behave as in 2.0. Backported from 3.1.0.
+- Behavioural tests for this option (`tests/`), kept out of dist installs through `.gitattributes`.
+
 ## 2.0.2 (2026-09-25)
 
 Hotfix for projects that stay on `^2.0`. The maintained line is 3.x on `main` (Silverstripe 5 and 6).

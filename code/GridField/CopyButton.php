@@ -5,16 +5,23 @@ namespace Unisolutions\GridField;
 # Not imported: framework 6 only (framework 4/5 have SilverStripe\ORM\ValidationException).
 # The class is resolved at runtime instead, see validationExceptionClass().
 //use SilverStripe\Core\Validation\ValidationException;
+use SilverStripe\Control\Controller;
+use SilverStripe\Control\HTTPResponse;
 use SilverStripe\Forms\GridField\GridField_ActionMenuItem;
 use SilverStripe\Forms\GridField\GridField_ColumnProvider;
 use SilverStripe\Forms\GridField\GridField_ActionProvider;
 use SilverStripe\Forms\GridField\GridField_FormAction;
 use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldDetailForm;
 use SilverStripe\ORM\DataObject;
 
 /**
  * This component provides a button for copying record.
  * First of all it dublicates record and then opens opens edit form {@link GridFieldDetailForm}.
+ *
+ * NB: the second half of the line above describes the Silverstripe 3 version (1.x). Since 2.0 the
+ * copy is written and the GridField re-renders with it in the list; no edit form is opened.
+ * From 2.1 the edit form can be opened again, opt-in, with {@link setOpenAfterCopy()}.
  *
  * @package    framework
  * @subpackage gridfield
@@ -26,9 +33,45 @@ class CopyButton implements GridField_ColumnProvider, GridField_ActionProvider, 
 
     private $useAsColumn;
 
+    /**
+     * Whether a successful copy opens the copy's edit form instead of re-rendering the list.
+     * Off by default so existing GridFields keep their 2.0 behaviour.
+     *
+     * @var bool
+     */
+    private $openAfterCopy = false;
+
     public function __construct(bool $useAsColumn = false)
     {
         $this->useAsColumn = $useAsColumn;
+    }
+
+    /**
+     * Open the copy's edit form (the GridField's own detail form) after a successful copy, instead of
+     * re-rendering the list with the copy in it.
+     *
+     * Falls back to the list re-render when this GridField cannot open the copy: it has no
+     * GridFieldDetailForm, or the copy is not in its list (a many_many list, or a filtered one, does
+     * not gain the copy through duplicate() alone).
+     *
+     * No `static` return type (3.1 has one): the 2.x line declares no PHP version and still installs
+     * on Silverstripe 4 under PHP 7.4, where `static` is not a valid return type.
+     *
+     * @param bool $open
+     * @return $this
+     */
+    public function setOpenAfterCopy(bool $open = true)
+    {
+        $this->openAfterCopy = $open;
+        return $this;
+    }
+
+    /**
+     * @return bool
+     */
+    public function getOpenAfterCopy(): bool
+    {
+        return $this->openAfterCopy;
     }
 
     public function augmentColumns($gridField, &$columns)
@@ -116,7 +159,69 @@ class CopyButton implements GridField_ColumnProvider, GridField_ActionProvider, 
             if (!$clone || $clone->ID < 1) {
                 user_error("Error Duplicating!", E_USER_ERROR);
             }
+
+            # Opt-in (setOpenAfterCopy()): open the copy's edit form. Returning the redirect response
+            # makes GridField::gridFieldAlterAction() hand it back as-is instead of re-rendering the list.
+            # A null result (option off, or the copy cannot be opened here) keeps the default behaviour.
+            if ($this->openAfterCopy) {
+                return $this->redirectToEditForm($gridField, $clone);
+            }
         }
+    }
+
+    /**
+     * Redirect to the copy's edit form in this GridField's detail form, or return null when that is
+     * not possible and the list should simply re-render.
+     *
+     * The redirect goes through the current controller, which in the CMS is the admin controller
+     * (LeftAndMain on Silverstripe 4 and 5, AdminController on 6), also for a GridField nested in a
+     * record's edit form: the GridField and item request handlers in between are RequestHandlers, not
+     * Controllers. On the CMS's ajax GridField request that controller's redirect() answers with an
+     * X-ControllerURL header, and the admin client then loads the edit form into the panel.
+     * Outside the CMS, Controller::redirect() gives a plain 302 to the same URL.
+     *
+     * @param GridField $gridField
+     * @param DataObject $clone the written copy
+     * @return HTTPResponse|null
+     */
+    protected function redirectToEditForm(GridField $gridField, DataObject $clone): ?HTTPResponse
+    {
+        # Without a detail form this GridField has no edit URL to go to (e.g. a read-only list).
+        if (!$gridField->getConfig()->getComponentByType(GridFieldDetailForm::class)) {
+            return null;
+        }
+
+        # The detail form only opens records it finds in the GridField's list. duplicate() does not add
+        # the copy to a many_many list, or to a list filtered on something the copy does not match, so
+        # the edit URL would 404 there.
+        if (!$gridField->getList()->byID($clone->ID)) {
+            return null;
+        }
+
+        # GridField::Link() is built from its Form's action; a GridField outside a Form (only seen in
+        # code that calls handleAction() directly) has no URL at all.
+        if (!$gridField->getForm()) {
+            return null;
+        }
+
+        # The same URL GridFieldEditButton::getUrl() builds for a row, so it works for a GridField in a
+        # ModelAdmin as well as for one nested in a record's edit form (whose Link() already includes
+        # the parent item's path).
+        $link = Controller::join_links($gridField->Link('item'), $clone->ID, 'edit');
+
+        # addAllStateToUrl() carries the other GridFields' state along, as the edit button does. Older
+        # framework 4 releases do not have it. It is called with one argument: framework 5 has an
+        # optional second one, framework 6 does not.
+        if (method_exists($gridField, 'addAllStateToUrl')) {
+            $link = $gridField->addAllStateToUrl($link);
+        }
+
+        $controller = Controller::curr();
+        if (!$controller) {
+            return null;
+        }
+
+        return $controller->redirect($link);
     }
 
     public function getTitle($gridField, $record, $columnName)

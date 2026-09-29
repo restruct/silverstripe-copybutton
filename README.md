@@ -85,7 +85,8 @@ class MyAdmin extends ModelAdmin
 ## What a copy does
 
 Clicking Copy calls `DataObject::duplicate()` on the record and writes the copy; the GridField then
-re-renders with the copy in the list. No edit form is opened.
+re-renders with the copy in the list. No edit form is opened, unless you turn on
+[open after copy](#open-the-copy-after-copying).
 
 * **Relations are copied only where the model says so.** `duplicate()` follows the model's
   `cascade_duplicates` config; see
@@ -110,6 +111,34 @@ class SomeObjectExtension extends Extension
     }
 }
 ```
+
+## Open the copy after copying
+
+From 3.1, the button can open the copy's edit form straight away instead of re-rendering the list.
+It is off by default:
+
+```php
+use SilverStripe\Forms\GridField\GridFieldEditButton;
+use Unisolutions\GridField\CopyButton;
+
+$config->addComponent(CopyButton::create()->setOpenAfterCopy(true), GridFieldEditButton::class);
+```
+
+The copy opens in the GridField's own detail form (`GridFieldDetailForm`), at the same URL the row's
+edit button links to. That works for a GridField in a ModelAdmin and for one nested in a record's
+edit form. In the CMS the redirect is answered with an `X-ControllerURL` header, and the admin loads
+the edit form into the panel; outside the CMS it is a normal 302 redirect.
+
+When the GridField cannot open the copy, the button falls back to re-rendering the list, without an
+error:
+
+* the GridField has no `GridFieldDetailForm` (for example `GridFieldConfig_Base`), or
+* the copy is not in the GridField's list. `duplicate()` does not add the copy to a `many_many`
+  list, or to a list filtered on something the copy does not match; a `has_many` list keeps it,
+  because the copy keeps the parent's ID.
+
+This replaces redirecting from the model's `onAfterDuplicate()`, which fires on every
+`duplicate()` call, not only on a click of this button.
 
 ## Configuration
 

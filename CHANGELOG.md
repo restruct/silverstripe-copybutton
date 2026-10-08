@@ -1,5 +1,16 @@
 # Changelog
 
+## 3.1.1 (unreleased)
+
+### Fixed
+
+- Column mode no longer renders a literal `classnames="font-icon-plus"` HTML attribute on the copy
+  button. `classNames` is action-menu data, so it is now added in `getExtraData()` only; the menu
+  item keeps its plus icon (#6).
+- The stylesheet's `.dropdown-menu .gridfield-button-copy` rules are retired (commented out): the
+  admin's action menu never puts that class on a dropdown item on Silverstripe 5 or 6, so they never
+  applied. The menu item looks as before, with the admin's own plus icon like the core items (#6).
+
 ## 3.1.0 (2026-09-29)
 
 ### Added

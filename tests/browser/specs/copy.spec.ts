@@ -124,3 +124,34 @@ test.describe('Column mode (CopyButton::create(true))', () => {
         await expect(locked.locator('.action-menu__toggle')).toBeVisible();
     });
 });
+
+test.describe('Icons and markup (#6)', () => {
+    test('the menu "Copy" item draws the admin plus icon like the core items, and no module rule restyles it', async ({ page }) => {
+        // The admin's React action menu puts only `action` + the menu data's classNames on a
+        // dropdown item (framework 5 and 6 alike), never the column button's `class`. The icon
+        // therefore comes from font-icon-plus in classNames, the admin's own icon class.
+        const grid = await openTab(page, 'menu');
+        const items = await openActionMenu(rowsTitled(grid, 'Menu copy').first());
+        const copy = items.filter({ hasText: /^Copy$/ });
+        await expect(copy).toHaveCount(1);
+        await expect(copy).toHaveClass(/(^|\s)font-icon-plus(\s|$)/);
+        const glyph = await copy.evaluate((el) => {
+            const before = getComputedStyle(el, '::before');
+            const after = getComputedStyle(el, '::after');
+            return { content: before.content, font: before.fontFamily, after: after.content };
+        });
+        expect(glyph.font.toLowerCase()).toContain('silverstripe');
+        expect(glyph.content).not.toBe('none');
+        // The pre-#6 stylesheet appended the title as ::after text inside the menu; nothing does now.
+        expect(glyph.after).toBe('none');
+    });
+
+    test('the column button carries no literal classnames attribute', async ({ page }) => {
+        // `classNames` is menu data for the React action menu, not an HTML attribute. Up to 3.1.0
+        // it was set on the column button too and rendered as classnames="font-icon-plus".
+        const grid = await openTab(page, 'column');
+        const button = copyColumnButton(rowsTitled(grid, 'Column copy').first());
+        await expect(button).toBeVisible();
+        expect(await button.getAttribute('classnames')).toBeNull();
+    });
+});

@@ -26,10 +26,15 @@
 	-webkit-font-smoothing: antialiased;
 	-moz-osx-font-smoothing: grayscale;
 }
-.dropdown-menu .gridfield-button-copy:before {
-	content: "f";
-	margin-right: 2px;
-}
-.dropdown-menu .gridfield-button-copy:after {
-	content: attr(title);
-}
+/* Retired (#6): these never match on Silverstripe 4.13, 5 or 6. The admin's React action menu    */
+/* gives a dropdown item only `action` plus the menu data's classNames (font-icon-plus, see       */
+/* CopyButton::getExtraData()), never .gridfield-button-copy, so the menu item draws the admin's  */
+/* own plus icon and title text like the core items. Re-targeting these rules at the menu item    */
+/* would also pull in the column-button rules above (negative margins, min sizes).                */
+/* .dropdown-menu .gridfield-button-copy:before { */
+/* 	content: "f"; */
+/* 	margin-right: 2px; */
+/* } */
+/* .dropdown-menu .gridfield-button-copy:after { */
+/* 	content: attr(title); */
+/* } */

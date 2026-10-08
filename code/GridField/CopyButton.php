@@ -132,7 +132,10 @@ class CopyButton extends AbstractGridFieldComponent implements GridField_ColumnP
             ['RecordID' => $record->ID]
         )
             ->addExtraClass('gridfield-button-copy')
-            ->setAttribute('classNames', 'font-icon-plus')
+            # `classNames` is action-menu data, not an HTML attribute: set here it also rendered as a
+            # literal classnames="..." attribute on the column button (#6). getExtraData() adds it
+            # to the menu data instead.
+            //->setAttribute('classNames', 'font-icon-plus')
             ->setAttribute('title', $title)
             ->setDescription(_t('GridAction.COPY_DESCRIPTION', 'Copy'))
             ->setAttribute('aria-label', $title);
@@ -253,7 +256,11 @@ class CopyButton extends AbstractGridFieldComponent implements GridField_ColumnP
         $field = $this->getCopyAction($gridField, $record, $columnName);
 
         if ($field) {
-            return $field->getAttributes();
+            # The admin's React action menu builds the dropdown item's class from `action` plus this
+            # data's `classNames` only; the button's own `class` (gridfield-button-copy) never
+            # reaches it, on framework 5 or 6. font-icon-plus gives the item the admin's plus icon,
+            # as font-icon-edit/-trash do for the core items on framework 5.
+            return array_merge($field->getAttributes(), ['classNames' => 'font-icon-plus']);
         }
 
         return null;

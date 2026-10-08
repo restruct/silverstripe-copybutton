@@ -248,6 +248,23 @@ class CopyButtonTest extends SapphireTest
         $this->assertNull($button->getExtraData($gridField, $record, 'Actions'));
     }
 
+    /**
+     * Regression for #6: up to 3.1.0 the column button carried a literal classnames="font-icon-plus"
+     * HTML attribute. `classNames` is menu data (the admin's React action menu reads it from
+     * getExtraData()), not an HTML attribute, and does nothing on a plain button.
+     */
+    public function testIssue6ColumnButtonHasNoLiteralClassNamesAttribute()
+    {
+        $this->logInWithPermission('ADMIN');
+        $button = new CopyButton(true);
+        $record = $this->objFromFixture(CopyRecord::class, 'first');
+
+        $html = (string) $button->getColumnContent($this->gridField($button, true), $record, 'Actions');
+
+        $this->assertStringContainsString('gridfield-button-copy', $html, 'control: the button rendered');
+        $this->assertDoesNotMatchRegularExpression('/\sclassnames=/i', $html);
+    }
+
     public function testColumnModeRendersNothingForUsersWhoCannotCreate()
     {
         $this->logOut();
@@ -273,6 +290,24 @@ class CopyButtonTest extends SapphireTest
         $this->assertIsArray($data);
         $this->assertStringContainsString('gridfield-button-copy', $data['class']);
         $this->assertArrayHasKey('data-url', $data);
+    }
+
+    /**
+     * #6: the menu item's icon comes from the `classNames` menu data, which the admin's action menu
+     * puts on the dropdown item (framework 5 and 6 alike). Moving it off the column button must not
+     * lose it here.
+     */
+    public function testIssue6MenuItemKeepsItsIconClassInTheMenuData()
+    {
+        $this->logInWithPermission('ADMIN');
+        $button = new CopyButton();
+        $record = $this->objFromFixture(CopyRecord::class, 'first');
+
+        $data = $button->getExtraData($this->gridField($button, true), $record, 'Actions');
+
+        $this->assertIsArray($data);
+        $this->assertArrayHasKey('classNames', $data);
+        $this->assertContains('font-icon-plus', explode(' ', $data['classNames']));
     }
 
     /**

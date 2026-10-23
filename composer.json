@@ -14,6 +14,12 @@
         {
             "name": "Elvinas Liutkevičius",
             "email": "elvinas@unisolutions.eu"
+        },
+        {
+            "name": "Restruct",
+            "email": "dev@restruct.nl",
+            "homepage": "https://restruct.nl",
+            "role": "Maintainer"
         }
     ],
     "require": {

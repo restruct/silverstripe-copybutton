@@ -2,12 +2,14 @@
     "name": "restruct/silverstripe-copybutton",
     "type": "silverstripe-vendormodule",
     "license": "BSD-3-Clause",
-    "description": "Adds copy/duplicate button to the GridField.",
+    "description": "A Copy action for Silverstripe GridField rows: duplicate a record in one click, from the row action menu or an icon button, and optionally open the copy.",
     "keywords": [
         "silverstripe",
-        "copy",
-        "button",
+        "silverstripe-module",
+        "silverstripe-cms",
         "gridfield",
+        "modeladmin",
+        "copy",
         "duplicate"
     ],
     "authors": [
